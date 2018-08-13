@@ -11,6 +11,7 @@ let foodBlock;
 let foodBlockPosition;
 let snakeMovementDirection = 'right';
 let gameOver = false;
+const snakeBlocks = new Set();
 
 function createNewBlock(x,y) {
   let newBlock = document.createElement('div');
@@ -20,11 +21,29 @@ function createNewBlock(x,y) {
   snake.push(newBlock);
   snakeData.push([x,y]);
   gameArea.appendChild(newBlock);
+  snakeBlocks.add(`${x}_${y}`);
 }
 
 function createFoodBlock() {
   const x = Math.floor(Math.random() * gameAreaWidth / snakeBlockSize) * snakeBlockSize;
   const y = Math.floor(Math.random() * gameAreaHeight / snakeBlockSize) * snakeBlockSize;
+  // check that the food block position doesn't overlap with the position of one of the snake's blocks
+  if (snakeBlocks.has(`${x}_${y}`)) {
+    let found = false;
+    for (let dx = 1; dx < gameAreaWidth; dx++) {
+      if (found) {
+        break;
+      }
+      for (let dy = 1; dy < gameAreaHeight; dy++) {
+        if (!snakeBlocks.has(`${(x + dx) % gameAreaWidth}_${(y + dy) % gameAreaHeight}`)) {
+          x = (x + dx) % gameAreaWidth;
+          y = (y + dy) % gameAreaHeight;
+          found = true;
+          break;
+        }
+      }
+    }
+  }
   const newFoodBlock = document.createElement('div');
   newFoodBlock.setAttribute('class', 'food-block');
   newFoodBlock.style.left = x + 'px';
@@ -39,7 +58,10 @@ function createFoodBlock() {
 
 function moveSnake(dx, dy) {
   const lastBlockPosition = [snakeData[snakeData.length - 1][0], snakeData[snakeData.length - 1][1]];
-  snakeData = [[(gameAreaWidth + snakeData[0][0] + dx) % gameAreaWidth, (gameAreaHeight + snakeData[0][1] + dy) % gameAreaHeight]].concat(snakeData.slice(0, snakeData.length - 1));
+  const newBlockPosition = [(gameAreaWidth + snakeData[0][0] + dx) % gameAreaWidth, (gameAreaHeight + snakeData[0][1] + dy) % gameAreaHeight];
+  snakeBlocks.delete(`${lastBlockPosition[0]}_${lastBlockPosition[1]}`);
+  snakeBlocks.add(`${newBlockPosition[0]}_${newBlockPosition[1]}`);
+  snakeData = [newBlockPosition].concat(snakeData.slice(0, snakeData.length - 1));
   for (let i = 0; i < snakeData.length; i++) {
     if ((i > 0) && (snakeData[0][0] === snakeData[i][0]) && (snakeData[0][1] === snakeData[i][1])) {
       gameOver = true;
