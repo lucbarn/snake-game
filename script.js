@@ -25,8 +25,8 @@ function createNewBlock(x,y) {
 }
 
 function createFoodBlock() {
-  const x = Math.floor(Math.random() * gameAreaWidth / snakeBlockSize) * snakeBlockSize;
-  const y = Math.floor(Math.random() * gameAreaHeight / snakeBlockSize) * snakeBlockSize;
+  let x = Math.floor(Math.random() * gameAreaWidth / snakeBlockSize) * snakeBlockSize;
+  let y = Math.floor(Math.random() * gameAreaHeight / snakeBlockSize) * snakeBlockSize;
   // check that the food block position doesn't overlap with the position of one of the snake's blocks
   if (snakeBlocks.has(`${x}_${y}`)) {
     let found = false;
