@@ -1,20 +1,27 @@
-#buttons-container {
+#controls-container {
   position: absolute;
   top: 50px;
   left: 50px;
 }
 
-#start-button, #stop-button {
+.control-button {
   display: inline-block;
   color: white;
   background-color: blue;
   padding: 10px 20px;
   margin: 0px 5px;
-  border-radius: 2px;
+  border-radius: 3px;
 }
 
-#start-button:hover, #stop-button:hover {
+.control-button:hover {
   cursor: pointer;
+}
+
+#points {
+  display: block;
+  margin: 15px 5px;
+  font-family: sans-serif;
+  font-weight: bold;
 }
 
 #game-area {

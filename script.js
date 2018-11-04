@@ -2,15 +2,20 @@ const snakeBlockSize = 15;
 const gameArea = document.getElementById('game-area');
 const startButton = document.getElementById('start-button');
 const stopButton = document.getElementById('stop-button');
+const pointsDiv = document.getElementById('points');
 let gameAreaWidth = 900;
 let gameAreaHeight = 600;
+// initial position of the snake's first block
 const initialPosition = [0,0];
+// array of snake's blocks positions
 let snakeData = [];
+// array of snake's div elements
 let snake = [];
 let foodBlock;
 let foodBlockPosition;
 let snakeMovementDirection = 'right';
 let gameOver = false;
+let points = 0;
 const snakeBlocks = new Set();
 
 function createNewBlock(x,y) {
@@ -68,6 +73,8 @@ function moveSnake(dx, dy) {
   if ((snakeData[0][0] === foodBlockPosition[0]) && (snakeData[0][1] === foodBlockPosition[1])) {
     createNewBlock(...lastBlockPosition);
     createFoodBlock();
+    points++;
+    pointsDiv.innerText = `Points: ${points}`;
   }
 }
 
