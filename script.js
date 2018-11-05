@@ -1,13 +1,15 @@
-const snakeBlockSize = 15;
 const gameArea = document.getElementById('game-area');
 const startButton = document.getElementById('start-button');
 const stopButton = document.getElementById('stop-button');
 const pointsDiv = document.getElementById('points');
+const gameOverLayer = document.getElementById('game-over-layer');
+
 let gameAreaWidth = 900;
 let gameAreaHeight = 600;
-// initial position of the snake's first block
-const initialPosition = [0,0];
-// array of snake's blocks positions
+const snakeBlockSize = 15;
+// initial position of the snake
+const initialPosition = [[30,0], [15,0], [0,0]];
+// array of snake's blocks positions, first element is snake's head
 let snakeData = [];
 // array of snake's div elements
 let snake = [];
@@ -66,6 +68,7 @@ function moveSnake(dx, dy) {
     if ((i > 0) && (snakeData[0][0] === snakeData[i][0]) && (snakeData[0][1] === snakeData[i][1])) {
       gameOver = true;
       stopGame();
+      gameOverLayer.style.display = 'block';
     }
     snake[i].style.left = snakeData[i][0] + 'px';
     snake[i].style.top = snakeData[i][1] + 'px';
@@ -78,7 +81,7 @@ function moveSnake(dx, dy) {
   }
 }
 
-createNewBlock(...initialPosition);
+initialPosition.forEach(coordinates => createNewBlock(...coordinates));
 createFoodBlock();
 
 let snakeMovement;
@@ -112,22 +115,22 @@ function f(event) {
   switch (event.which) {
     // the snake cannot invert its course
     case 37:
-      if ((snakeData.length === 1) || (snakeData[0][0] - snakeData[1][0] !== snakeBlockSize)) {
+      if (snakeData[0][0] - snakeData[1][0] !== snakeBlockSize) {
         snakeMovementDirection = 'left';
       }
       break;
     case 38:
-      if ((snakeData.length === 1) || (snakeData[0][1] - snakeData[1][1] !== snakeBlockSize)) {
+      if (snakeData[0][1] - snakeData[1][1] !== snakeBlockSize) {
         snakeMovementDirection = 'top';
       }
       break;
     case 39:
-      if ((snakeData.length === 1) || (snakeData[0][0] - snakeData[1][0] !== -snakeBlockSize)) {
+      if (snakeData[0][0] - snakeData[1][0] !== -snakeBlockSize) {
         snakeMovementDirection = 'right';
       }
       break;
     case 40:
-      if ((snakeData.length === 1) || (snakeData[0][1] - snakeData[1][1] !== -snakeBlockSize)) {
+      if (snakeData[0][1] - snakeData[1][1] !== -snakeBlockSize) {
         snakeMovementDirection = 'down';
       }
       break;
