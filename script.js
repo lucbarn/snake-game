@@ -16,6 +16,7 @@ let snake = [];
 let foodBlock;
 let foodBlockPosition;
 let snakeMovementDirection = 'right';
+let gameStarted = false;
 let gameOver = false;
 let points = 0;
 const snakeBlocks = new Set();
@@ -64,15 +65,16 @@ function moveSnake(dx, dy) {
   snakeBlocks.delete(`${lastBlockPosition[0]}_${lastBlockPosition[1]}`);
   snakeBlocks.add(`${newBlockPosition[0]}_${newBlockPosition[1]}`);
   snakeData = [newBlockPosition].concat(snakeData.slice(0, snakeData.length - 1));
-  for (let i = 0; i < snakeData.length; i++) {
-    if ((i > 0) && (snakeData[0][0] === snakeData[i][0]) && (snakeData[0][1] === snakeData[i][1])) {
-      gameOver = true;
-      stopGame();
-      gameOverLayer.style.display = 'block';
-    }
-    snake[i].style.left = snakeData[i][0] + 'px';
-    snake[i].style.top = snakeData[i][1] + 'px';
+  // If two snake's blocks overlap, the game is over
+  if (snakeBlocks.size < snakeData.length) {
+    gameOver = true;
+    stopGame();
+    gameOverLayer.style.display = 'block';
   }
+  // Move tail's block in the head's position
+  snake = [snake.pop()].concat(snake);
+  snake[0].style.left = snakeData[0][0] + 'px';
+  snake[0].style.top = snakeData[0][1] + 'px';
   if ((snakeData[0][0] === foodBlockPosition[0]) && (snakeData[0][1] === foodBlockPosition[1])) {
     createNewBlock(...lastBlockPosition);
     createFoodBlock();
@@ -87,7 +89,8 @@ createFoodBlock();
 let snakeMovement;
 
 function startGame() {
-  if (!gameOver) {
+  if (!(gameOver || gameStarted)) {
+    gameStarted = true;
     snakeMovement = setInterval(function() {
       switch (snakeMovementDirection) {
         case 'left':
@@ -109,6 +112,7 @@ function startGame() {
 
 function stopGame() {
   clearInterval(snakeMovement);
+  gameStarted = false;
 }
 
 function f(event) {
