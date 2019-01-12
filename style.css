@@ -7,8 +7,9 @@
 .control-button {
   display: inline-block;
   color: white;
-  background-color: blue;
-  padding: 10px 20px;
+  font-family: sans-serif;
+  background-color: #005aff;
+  padding: 10px 30px;
   margin: 0px 5px;
   border-radius: 3px;
 }
@@ -54,6 +55,13 @@
   transform: translateX(-50%) translateY(-50%);
   font-size: 35px;
   font-family: sans-serif;
+}
+
+#reset-button {
+  position: absolute;
+  bottom: 50px;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .snake-block {

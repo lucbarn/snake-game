@@ -1,25 +1,49 @@
 const gameArea = document.getElementById('game-area');
 const startButton = document.getElementById('start-button');
 const stopButton = document.getElementById('stop-button');
+const resetButton = document.getElementById('reset-button');
 const pointsDiv = document.getElementById('points');
 const gameOverLayer = document.getElementById('game-over-layer');
 
-let gameAreaWidth = 900;
-let gameAreaHeight = 600;
+const gameAreaWidth = 900;
+const gameAreaHeight = 600;
 const snakeBlockSize = 15;
 // initial position of the snake
 const initialPosition = [[30,0], [15,0], [0,0]];
+const snakeBlocks = new Set();
+
 // array of snake's blocks positions, first element is snake's head
 let snakeData = [];
 // array of snake's div elements
 let snake = [];
 let foodBlock;
 let foodBlockPosition;
-let snakeMovementDirection = 'right';
-let gameStarted = false;
-let gameOver = false;
-let points = 0;
-const snakeBlocks = new Set();
+let snakeMovementDirection;
+let gameStarted;
+let gameOver;
+let points;
+let snakeMovement;
+
+function reset() {
+  gameStarted = false;
+  gameOver = false;
+  snakeMovementDirection = 'right';
+  points = 0;
+  setPoints(points);
+  clearSnake();
+  initialPosition.forEach(coordinates => createNewBlock(...coordinates));
+  createFoodBlock();
+  gameOverLayer.style.display = 'none';
+}
+
+function clearSnake() {
+  let currentBlock;
+  while (snake.length > 0) {
+    currentBlock = snake.pop();
+    gameArea.removeChild(currentBlock);
+  }
+  snakeData = [];
+}
 
 function createNewBlock(x,y) {
   let newBlock = document.createElement('div');
@@ -59,6 +83,10 @@ function createFoodBlock() {
   gameArea.appendChild(newFoodBlock);
 }
 
+function setPoints(n) {
+  pointsDiv.innerText = `Points: ${points}`;
+}
+
 function moveSnake(dx, dy) {
   const lastBlockPosition = [snakeData[snakeData.length - 1][0], snakeData[snakeData.length - 1][1]];
   const newBlockPosition = [(gameAreaWidth + snakeData[0][0] + dx) % gameAreaWidth, (gameAreaHeight + snakeData[0][1] + dy) % gameAreaHeight];
@@ -78,15 +106,9 @@ function moveSnake(dx, dy) {
   if ((snakeData[0][0] === foodBlockPosition[0]) && (snakeData[0][1] === foodBlockPosition[1])) {
     createNewBlock(...lastBlockPosition);
     createFoodBlock();
-    points++;
-    pointsDiv.innerText = `Points: ${points}`;
+    setPoints(++points);
   }
 }
-
-initialPosition.forEach(coordinates => createNewBlock(...coordinates));
-createFoodBlock();
-
-let snakeMovement;
 
 function startGame() {
   if (!(gameOver || gameStarted)) {
@@ -140,7 +162,3 @@ function f(event) {
       break;
   }
 }
-
-window.addEventListener('keydown', f);
-startButton.addEventListener('click', startGame);
-stopButton.addEventListener('click', stopGame);
