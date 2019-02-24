@@ -43,6 +43,7 @@ function clearSnake() {
     gameArea.removeChild(currentBlock);
   }
   snakeData = [];
+  snakeBlocks.clear();
 }
 
 function createNewBlock(x,y) {
