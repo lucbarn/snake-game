@@ -1,7 +1,7 @@
 class Block {
   constructor(position, id) {
     // position is an array of length 2, which stores the cartesian coordinates of
-    // the corresponding block of the snake.
+    // the corresponding block of the snake
     this.position = position;
     this.id = id;
     this.nextBlock = null;
@@ -32,7 +32,7 @@ class Snake {
   // Snake is represented as a linked list with a pointer to the tail of the list
   // (the head of the snake), with each node of the list that stores the value of
   // the position of the corresponding block of the snake. The blocks are in
-  // reversed order with respect to the direction of movement of the snake.
+  // reversed order with respect to the direction of movement of the snake
 
   constructor(initialPositions) {
     if (initialPositions.length == 0) {
@@ -82,15 +82,17 @@ class Snake {
       this.snakeHead.setPosition(newBlockPosition);
       this.blocksSet.add(newBlockPosition[0] + '_' + newBlockPosition[1]);
     }
+    // If two blocks overlap, the game is over
     if (this.blocksSet.size() < this.blocksNum) {
       gameOver = true;
     }
-    const res = {
+    const gameState = {
       'foodEaten': foodBlockEaten,
       'gameOver': gameOver,
-      'headId': this.snakeHead.getId()
+      'headId': this.snakeHead.getId(),
+      'headPosition': this.snakeHead.getPosition()
     };
-    return res;
+    return gameState;
   }
 
 }
