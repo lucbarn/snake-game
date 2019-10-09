@@ -47,7 +47,7 @@ class Snake {
     }
     // the list's tail represents the head of the snake
     this.snakeHead = blocks[blocks.length-1];
-    this.blocksSet = new Set(initialPosition.map(position => position[0] + '_' + position[1]));
+    this.blocksSet = new Set(initialPositions.map(position => position[0] + '_' + position[1]));
     this.lastId = blocks.length-1;
     this.blocksNum = blocks.length;
   }
@@ -55,7 +55,7 @@ class Snake {
   move(dx, dy, gameAreaWidth, foodBlockPosition) {
     let foodBlockEaten = false;
     let gameOver = false;
-    const [headX, headY] = this.getHeadCoordinates();
+    const [headX, headY] = this.snakeHead.getPosition();
     const newBlockPosition = [
       (gameAreaWidth + headX + dx) % gameAreaWidth,
       (gameAreaHeight + headY + dy) % gameAreaHeight
@@ -83,7 +83,7 @@ class Snake {
       this.blocksSet.add(newBlockPosition[0] + '_' + newBlockPosition[1]);
     }
     // If two blocks overlap, the game is over
-    if (this.blocksSet.size() < this.blocksNum) {
+    if (this.blocksSet.size < this.blocksNum) {
       gameOver = true;
     }
     const gameState = {
@@ -93,6 +93,10 @@ class Snake {
       'headPosition': this.snakeHead.getPosition()
     };
     return gameState;
+  }
+
+  hasBlock(block) {
+    return this.blocksSet.has(block);
   }
 
 }

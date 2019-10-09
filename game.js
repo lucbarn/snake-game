@@ -1,46 +1,79 @@
 class Game {
 
-  const gameArea = document.getElementById('game-area');
-  const startButton = document.getElementById('start-button');
-  const stopButton = document.getElementById('stop-button');
-  const resetButton = document.getElementById('reset-button');
-  const pointsDiv = document.getElementById('points');
-  const gameOverLayer = document.getElementById('game-over-layer');
+  constructor(gameAreaWidth, gameAreaHeight, snakeBlockSize) {
+    this.gameAreaWidth = gameAreaWidth;
+    this.gameAreaHeight = gameAreaHeight;
+    this.snakeBlockSize = snakeBlockSize;
+    this.gameArea = document.getElementById('game-area');
+    this.startButton = document.getElementById('start-button');
+    this.stopButton = document.getElementById('stop-button');
+    this.resetButton = document.getElementById('reset-button');
+    this.pointsDiv = document.getElementById('points');
+    this.gameOverLayer = document.getElementById('game-over-layer');
+    this.initialPositions = [[0,0], [snakeBlockSize,0], [2*snakeBlockSize,0]];
+    this.blocksMap = new Map();
+    this.foodBlock = null;
+    this.foodBlockPosition = null;
+    // let snake;
+    // let snakeMovementDirection;
+    // let gameStarted;
+    // let gameOver;
+    // let points;
+    // let snakeMovement;
+  }
 
-  const gameAreaWidth = 900;
-  const gameAreaHeight = 600;
-  const snakeBlockSize = 15;
-  // initial position of the snake
-  const initialPositions = [[0,0], [15,0], [30,0]];
+  init() {
+    window.addEventListener('keydown', this.f.bind(this));
+    this.startButton.addEventListener('click', this.startGame.bind(this));
+    this.stopButton.addEventListener('click', this.stopGame.bind(this));
+    this.resetButton.addEventListener('click', this.newGame.bind(this));
+  }
 
-  let blocksMap = {};
-  let snake;
-  let foodBlock;
-  let foodBlockPosition;
-  let snakeMovementDirection;
-  let gameStarted;
-  let gameOver;
-  let points;
-  let snakeMovement;
+  newGame() {
+    this.gameStarted = false;
+    this.gameOver = false;
+    this.snakeMovementDirection = 'right';
+    this.points = 0;
+    this.setPoints(0);
+    this.clearSnake();
+    this.initialPositions.forEach((coordinates, i) => this.createNewBlock(...coordinates, i));
+    this.snake = new Snake(this.initialPositions);
+    this.createFoodBlock();
+    this.gameOverLayer.style.display = 'none';
+  }
 
-  reset() {
-    gameStarted = false;
-    gameOver = false;
-    snakeMovementDirection = 'right';
-    points = 0;
-    setPoints(points);
-    clearSnake();
-    initialPositions.forEach((coordinates, i) => createNewBlock(...coordinates, i));
-    snake = new Snake(initialPositions);
-    createFoodBlock();
-    gameOverLayer.style.display = 'none';
+  startGame() {
+    if (!(this.gameOver || this.gameStarted)) {
+      this.gameStarted = true;
+      this.snakeMovement = setInterval(() => {
+        switch (this.snakeMovementDirection) {
+          case 'left':
+            this.moveSnake(-this.snakeBlockSize, 0);
+            break;
+          case 'up':
+            this.moveSnake(0, -this.snakeBlockSize);
+            break;
+          case 'right':
+            this.moveSnake(this.snakeBlockSize, 0);
+            break;
+          case 'down':
+            this.moveSnake(0, this.snakeBlockSize);
+            break;
+        }
+      }, 50);
+    }
+  }
+
+  stopGame() {
+    clearInterval(this.snakeMovement);
+    this.gameStarted = false;
   }
 
   clearSnake() {
-    for (currentBlock of blocksMap) {
-      gameArea.removeChild(currentBlock);
+    for (let [index, currentBlock] of this.blocksMap) {
+      this.gameArea.removeChild(currentBlock);
     }
-    blocksMap = {};
+    this.blocksMap.clear();
   }
 
   createNewBlock(x, y, id) {
@@ -48,20 +81,21 @@ class Game {
     newBlock.setAttribute('class', 'snake-block');
     newBlock.style.left = x + 'px';
     newBlock.style.top = y + 'px';
-    blocksMap[id] = newBlock;
-    gameArea.appendChild(newBlock);
+    this.blocksMap.set(id, newBlock);
+    this.gameArea.appendChild(newBlock);
   }
 
   getNewFoodPosition() {
-    let x = Math.floor(Math.random() * gameAreaWidth / snakeBlockSize) * snakeBlockSize;
-    let y = Math.floor(Math.random() * gameAreaHeight / snakeBlockSize) * snakeBlockSize;
+    let x = Math.floor(Math.random() * this.gameAreaWidth / this.snakeBlockSize) * this.snakeBlockSize;
+    let y = Math.floor(Math.random() * this.gameAreaHeight / this.snakeBlockSize) * this.snakeBlockSize;
     // check that the food block position doesn't overlap with the position of one of the snake's blocks
-    if (snakeBlocks.has(`${x}_${y}`)) {
-      for (let dx = 0; dx < gameAreaWidth; dx += snakeBlockSize) {
-        for (let dy = 0; dy < gameAreaHeight; dy += snakeBlockSize) {
-          if (!snakeBlocks.has(`${(x + dx) % gameAreaWidth}_${(y + dy) % gameAreaHeight}`)) {
-            x = (x + dx) % gameAreaWidth;
-            y = (y + dy) % gameAreaHeight;
+    // if it does, find the first available position
+    if (this.snake.hasBlock(`${x}_${y}`)) {
+      for (let dx = 0; dx < this.gameAreaWidth; dx += this.snakeBlockSize) {
+        for (let dy = 0; dy < this.gameAreaHeight; dy += this.snakeBlockSize) {
+          if (!this.snake.hasBlock(`${(x + dx) % this.gameAreaWidth}_${(y + dy) % this.gameAreaHeight}`)) {
+            x = (x + dx) % this.gameAreaWidth;
+            y = (y + dy) % this.gameAreaHeight;
             return [x,y];
           }
         }
@@ -72,90 +106,63 @@ class Game {
   }
 
   createFoodBlock() {
-    const [x,y] = getNewFoodPosition();
+    const [x,y] = this.getNewFoodPosition();
     const newFoodBlock = document.createElement('div');
     newFoodBlock.setAttribute('class', 'food-block');
     newFoodBlock.style.left = x + 'px';
     newFoodBlock.style.top = y + 'px';
-    if (foodBlock) {
-      gameArea.removeChild(foodBlock);
+    if (this.foodBlock) {
+      this.gameArea.removeChild(this.foodBlock);
     }
-    foodBlock = newFoodBlock;
-    foodBlockPosition = [x,y];
-    gameArea.appendChild(newFoodBlock);
+    this.foodBlock = newFoodBlock;
+    this.foodBlockPosition = [x,y];
+    this.gameArea.appendChild(newFoodBlock);
   }
 
   setPoints(n) {
-    pointsDiv.innerText = `Points: ${points}`;
+    this.pointsDiv.innerText = `Points: ${this.points}`;
   }
 
   moveSnake(dx, dy) {
-    const gameState = snake.move(dx, dy, gameAreaWidth, foodBlockPosition);
+    const gameState = this.snake.move(dx, dy, this.gameAreaWidth, this.foodBlockPosition);
     const {foodEaten, gameOver, headId, headPosition} = gameState;
-    const snakeHeadDiv = blocksMap[headId];
+    const snakeHeadDiv = this.blocksMap.get(headId);
     const [headX, headY] = headPosition;
     if (gameState['gameOver'] === true) {
-      gameOver = true;
-      stopGame();
-      gameOverLayer.style.display = 'block';
+      this.gameOver = true;
+      this.stopGame();
+      this.gameOverLayer.style.display = 'block';
     } else if (gameState['foodEaten'] === true) {
-      createNewBlock(headX, headY, headId);
-      createFoodBlock();
-      setPoints(++points);
+      this.createNewBlock(headX, headY, headId);
+      this.createFoodBlock();
+      this.setPoints(++this.points);
     } else {
       snakeHeadDiv.style.left = headX + 'px';
       snakeHeadDiv.style.top = headY + 'px';
     }
   }
 
-  startGame() {
-    if (!(gameOver || gameStarted)) {
-      gameStarted = true;
-      snakeMovement = setInterval(function() {
-        switch (snakeMovementDirection) {
-          case 'left':
-            moveSnake(-snakeBlockSize, 0);
-            break;
-          case 'up':
-            moveSnake(0, -snakeBlockSize);
-            break;
-          case 'right':
-            moveSnake(snakeBlockSize, 0);
-            break;
-          case 'down':
-            moveSnake(0, snakeBlockSize);
-            break;
-        }
-      }, 50);
-    }
-  }
-
-  stopGame() {
-    clearInterval(snakeMovement);
-    gameStarted = false;
-  }
-
   f(event) {
     switch (event.which) {
       // the snake cannot invert its course
       case 37:
-        if (snakeMovementDirection !== 'right') {
-          snakeMovementDirection = 'left';
+        if (this.snakeMovementDirection !== 'right') {
+          this.snakeMovementDirection = 'left';
         }
         break;
       case 38:
-        if (snakeMovementDirection !== 'down') {
-          snakeMovementDirection = 'up';
+        if (this.snakeMovementDirection !== 'down') {
+          this.snakeMovementDirection = 'up';
         }
         break;
       case 39:
-        if (snakeMovementDirection !== 'left') {
-          snakeMovementDirection = 'right';
+        if (this.snakeMovementDirection !== 'left') {
+          this.snakeMovementDirection = 'right';
         }
         break;
       case 40:
-        if (snakeMovementDirection !== 'up') {
-          snakeMovementDirection = 'down';
+        if (this.snakeMovementDirection !== 'up') {
+          this.snakeMovementDirection = 'down';
         }
         break;
     }
