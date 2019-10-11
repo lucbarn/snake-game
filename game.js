@@ -12,14 +12,14 @@ class Game {
     this.gameOverLayer = document.getElementById('game-over-layer');
     this.initialPositions = [[0,0], [snakeBlockSize,0], [2*snakeBlockSize,0]];
     this.blocksMap = new Map();
+    this.gameStarted = false;
+    this.gameOver = false;
+    this.points = 0;
     this.foodBlock = null;
     this.foodBlockPosition = null;
-    // let snake;
-    // let snakeMovementDirection;
-    // let gameStarted;
-    // let gameOver;
-    // let points;
-    // let snakeMovement;
+    this.snake = null;
+    this.snakeMovementDirection = null;
+    this.snakeMovement = null;
   }
 
   init() {
