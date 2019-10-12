@@ -18,7 +18,6 @@ class Game {
     this.foodBlock = null;
     this.foodBlockPosition = null;
     this.snake = null;
-    this.snakeMovementDirection = null;
     this.snakeMovement = null;
   }
 
@@ -32,12 +31,12 @@ class Game {
   newGame() {
     this.gameStarted = false;
     this.gameOver = false;
-    this.snakeMovementDirection = 'right';
     this.points = 0;
     this.setPoints(0);
     this.clearSnake();
     this.initialPositions.forEach((coordinates, i) => this.createNewBlock(...coordinates, i));
     this.snake = new Snake(this.initialPositions);
+    this.snake.movementDirection = 'right';
     this.createFoodBlock();
     this.gameOverLayer.style.display = 'none';
   }
@@ -46,7 +45,7 @@ class Game {
     if (!(this.gameOver || this.gameStarted)) {
       this.gameStarted = true;
       this.snakeMovement = setInterval(() => {
-        switch (this.snakeMovementDirection) {
+        switch (this.snake.movementDirection) {
           case 'left':
             this.moveSnake(-this.snakeBlockSize, 0);
             break;
@@ -146,23 +145,23 @@ class Game {
     switch (event.which) {
       // the snake cannot invert its course
       case 37:
-        if (this.snakeMovementDirection !== 'right') {
-          this.snakeMovementDirection = 'left';
+        if (this.snake.movementDirection !== 'right') {
+          this.snake.movementDirection = 'left';
         }
         break;
       case 38:
-        if (this.snakeMovementDirection !== 'down') {
-          this.snakeMovementDirection = 'up';
+        if (this.snake.movementDirection !== 'down') {
+          this.snake.movementDirection = 'up';
         }
         break;
       case 39:
-        if (this.snakeMovementDirection !== 'left') {
-          this.snakeMovementDirection = 'right';
+        if (this.snake.movementDirection !== 'left') {
+          this.snake.movementDirection = 'right';
         }
         break;
       case 40:
-        if (this.snakeMovementDirection !== 'up') {
-          this.snakeMovementDirection = 'down';
+        if (this.snake.movementDirection !== 'up') {
+          this.snake.movementDirection = 'down';
         }
         break;
     }

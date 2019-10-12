@@ -28,13 +28,49 @@ class Block {
   }
 }
 
+class MoveBlock {
+  constructor(moves, movementDirections) {
+    this.moves = moves;
+    this.movementDirections = movementDirections;
+    this.nextBlock = null;
+  }
+
+  getNextBlock() {
+    return this.nextBlock;
+  }
+
+  setNextBlock(nextBlock) {
+    this.nextBlock = nextBlock;
+  }
+
+  getMovementDirection() {
+    return this.movementDirections[this.movementDirections.length-1];
+  }
+
+  getMovementDirections() {
+    return this.movementDirections;
+  }
+
+  getLastPosition() {
+    return this.moves[this.moves.length-1];
+  }
+
+  getLastPositions(n) {
+    return this.moves.slice(this.moves.length - n);
+  }
+
+  getAllPositions() {
+    return this.moves;
+  }
+}
+
 class Snake {
   // Snake is represented as a linked list with a pointer to the tail of the list
   // (the head of the snake), with each node of the list that stores the value of
   // the position of the corresponding block of the snake. The blocks are in
   // reversed order with respect to the direction of movement of the snake
 
-  constructor(initialPositions) {
+  constructor(initialPositions, movementDirection) {
     if (initialPositions.length == 0) {
       throw 'At least an initial block is needed to create the snake';
     }
@@ -50,6 +86,7 @@ class Snake {
     this.blocksSet = new Set(initialPositions.map(position => position[0] + '_' + position[1]));
     this.lastId = blocks.length-1;
     this.blocksNum = blocks.length;
+    this.movementDirection = movementDirection;
   }
 
   move(dx, dy, gameAreaWidth, foodBlockPosition) {
@@ -99,4 +136,117 @@ class Snake {
     return this.blocksSet.has(block);
   }
 
+  nextMove(snakeLength, snakeBlockSize, areaHeight, areaWidth, foodBlockPosition) {
+    let moves = [];
+    let current = this.snakeTail;
+    while (current !== null) {
+      moves.push(current.getPosition());
+      current = current.getNextBlock();
+    }
+    let head = new MoveBlock(moves, [this.movementDirection]);
+    let tail = head;
+    let firstMove;
+    let secondMove;
+    let thirdMove;
+    let x;
+    let y;
+    let newPos;
+    let newDir;
+    const visited = new Set([head.getLastPosition().join('_')]);
+    while (true) {
+      [x,y] = head.getLastPosition();
+      if (head.getMovementDirection() === 'up') {
+        firstMove = {
+          p: [x, (y - snakeBlockSize + areaHeight) % areaHeight],
+          dir: 'up'
+        };
+        secondMove = {
+          p: [(x - snakeBlockSize + areaWidth) % areaWidth, y],
+          dir: 'left'
+        };
+        thirdMove = {
+          p: [(x + snakeBlockSize + areaWidth) % areaWidth, y],
+          dir: 'right'
+        };
+      } else if (head.getMovementDirection() === 'right') {
+        firstMove = {
+          p: [(x + snakeBlockSize + areaWidth) % areaWidth, y],
+          dir: 'right'
+        };
+        secondMove = {
+          p: [x, (y - snakeBlockSize + areaHeight) % areaHeight],
+          dir: 'up'
+        };
+        thirdMove = {
+          p: [x, (y + snakeBlockSize + areaHeight) % areaHeight],
+          dir: 'down'
+        };
+      } else if (head.getMovementDirection() === 'down') {
+        firstMove = {
+          p: [x, (y + snakeBlockSize + areaHeight) % areaHeight],
+          dir: 'down'
+        };
+        secondMove = {
+          p: [(x - snakeBlockSize + areaWidth) % areaWidth, y],
+          dir: 'left'
+        };
+        thirdMove = {
+          p: [(x + snakeBlockSize + areaWidth) % areaWidth, y],
+          dir: 'right'
+        };
+      } else {
+        firstMove = {
+          p: [(x - snakeBlockSize + areaWidth) % areaWidth, y],
+          dir: 'left'
+        };
+        secondMove = {
+          p: [x, (y - snakeBlockSize + areaHeight) % areaHeight],
+          dir: 'up'
+        };
+        thirdMove = {
+          p: [x, (y + snakeBlockSize + areaHeight) % areaHeight],
+          dir: 'down'
+        };
+      }
+      if (!visited.has(firstMove['p'].join('_')) && !head.getLastPositions(snakeLength).includes(firstMove['p'].join('_'))) {
+        newPos = firstMove['p'];
+        newDir = firstMove['dir'];
+        if (newPos.join('_') === foodBlockPosition.join('_')) {
+          return head.getMovementDirections().slice(1).concat([newDir]);
+        }
+        tail.setNextBlock(new MoveBlock(head.getAllPositions().concat([newPos]), head.getMovementDirections().concat([newDir])));
+        tail = tail.getNextBlock();
+        visited.add(newPos.join('_'));
+      }
+      if (!visited.has(secondMove['p'].join('_')) && !head.getLastPositions(snakeLength).includes(secondMove['p'].join('_'))) {
+        newPos = secondMove['p'];
+        newDir = secondMove['dir'];
+        if (newPos.join('_') === foodBlockPosition.join('_')) {
+          return head.getMovementDirections().slice(1).concat([newDir]);
+        }
+        tail.setNextBlock(new MoveBlock(head.getAllPositions().concat([newPos]), head.getMovementDirections().concat([newDir])));
+        tail = tail.getNextBlock();
+        visited.add(newPos.join('_'));
+      }
+      if (!visited.has(thirdMove['p'].join('_')) && !head.getLastPositions(snakeLength).includes(thirdMove['p'].join('_'))) {
+        newPos = thirdMove['p'];
+        newDir = thirdMove['dir'];
+        if (newPos.join('_') === foodBlockPosition.join('_')) {
+          return head.getMovementDirections().slice(1).concat([newDir]);
+        }
+        tail.setNextBlock(new MoveBlock(head.getAllPositions().concat([newPos]), head.getMovementDirections().concat([newDir])));
+        tail = tail.getNextBlock();
+        visited.add(newPos.join('_'));
+      }
+      if (head.getNextBlock() === null) {
+        break;
+      } else {
+        head = head.getNextBlock();
+      }
+    }
+    return head.getMovementDirections().slice(1);
+  }
+
 }
+
+module.exports = Snake;
