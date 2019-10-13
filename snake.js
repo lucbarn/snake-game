@@ -136,7 +136,7 @@ class Snake {
     return this.blocksSet.has(block);
   }
 
-  nextMove(snakeLength, snakeBlockSize, areaHeight, areaWidth, foodBlockPosition) {
+  nextMoves(snakeBlockSize, areaWidth, areaHeight, foodBlockPosition) {
     let moves = [];
     let current = this.snakeTail;
     while (current !== null) {
@@ -208,31 +208,31 @@ class Snake {
           dir: 'down'
         };
       }
-      if (!visited.has(firstMove['p'].join('_')) && !head.getLastPositions(snakeLength).includes(firstMove['p'].join('_'))) {
+      if (!visited.has(firstMove['p'].join('_')) && !head.getLastPositions(this.blocksNum).includes(firstMove['p'].join('_'))) {
         newPos = firstMove['p'];
         newDir = firstMove['dir'];
         if (newPos.join('_') === foodBlockPosition.join('_')) {
-          return head.getMovementDirections().slice(1).concat([newDir]);
+          return head.getMovementDirections().slice(1).concat([newDir]).reverse();
         }
         tail.setNextBlock(new MoveBlock(head.getAllPositions().concat([newPos]), head.getMovementDirections().concat([newDir])));
         tail = tail.getNextBlock();
         visited.add(newPos.join('_'));
       }
-      if (!visited.has(secondMove['p'].join('_')) && !head.getLastPositions(snakeLength).includes(secondMove['p'].join('_'))) {
+      if (!visited.has(secondMove['p'].join('_')) && !head.getLastPositions(this.blocksNum).includes(secondMove['p'].join('_'))) {
         newPos = secondMove['p'];
         newDir = secondMove['dir'];
         if (newPos.join('_') === foodBlockPosition.join('_')) {
-          return head.getMovementDirections().slice(1).concat([newDir]);
+          return head.getMovementDirections().slice(1).concat([newDir]).reverse();
         }
         tail.setNextBlock(new MoveBlock(head.getAllPositions().concat([newPos]), head.getMovementDirections().concat([newDir])));
         tail = tail.getNextBlock();
         visited.add(newPos.join('_'));
       }
-      if (!visited.has(thirdMove['p'].join('_')) && !head.getLastPositions(snakeLength).includes(thirdMove['p'].join('_'))) {
+      if (!visited.has(thirdMove['p'].join('_')) && !head.getLastPositions(this.blocksNum).includes(thirdMove['p'].join('_'))) {
         newPos = thirdMove['p'];
         newDir = thirdMove['dir'];
         if (newPos.join('_') === foodBlockPosition.join('_')) {
-          return head.getMovementDirections().slice(1).concat([newDir]);
+          return head.getMovementDirections().slice(1).concat([newDir]).reverse();
         }
         tail.setNextBlock(new MoveBlock(head.getAllPositions().concat([newPos]), head.getMovementDirections().concat([newDir])));
         tail = tail.getNextBlock();
@@ -244,7 +244,8 @@ class Snake {
         head = head.getNextBlock();
       }
     }
-    return head.getMovementDirections().slice(1);
+    console.log('Wrong!!!');
+    return head.getMovementDirections().slice(1).reverse();
   }
 
 }

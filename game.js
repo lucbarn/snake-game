@@ -14,6 +14,8 @@ class Game {
     this.blocksMap = new Map();
     this.gameStarted = false;
     this.gameOver = false;
+    this.autoPlay = true;
+    this.nextMoves = [];
     this.points = 0;
     this.foodBlock = null;
     this.foodBlockPosition = null;
@@ -22,7 +24,9 @@ class Game {
   }
 
   init() {
-    window.addEventListener('keydown', this.f.bind(this));
+    if (!this.autoPlay) {
+      window.addEventListener('keydown', this.f.bind(this));
+    }
     this.startButton.addEventListener('click', this.startGame.bind(this));
     this.stopButton.addEventListener('click', this.stopGame.bind(this));
     this.resetButton.addEventListener('click', this.newGame.bind(this));
@@ -38,6 +42,9 @@ class Game {
     this.snake = new Snake(this.initialPositions);
     this.snake.movementDirection = 'right';
     this.createFoodBlock();
+    if (this.autoPlay) {
+      this.nextMoves = this.snake.nextMoves(this.snakeBlockSize, this.gameAreaWidth, this.gameAreaHeight, this.foodBlockPosition);
+    }
     this.gameOverLayer.style.display = 'none';
   }
 
@@ -45,6 +52,9 @@ class Game {
     if (!(this.gameOver || this.gameStarted)) {
       this.gameStarted = true;
       this.snakeMovement = setInterval(() => {
+        if (this.autoPlay && this.nextMoves.length > 0) {
+          this.snake.movementDirection = this.nextMoves.pop();
+        }
         switch (this.snake.movementDirection) {
           case 'left':
             this.moveSnake(-this.snakeBlockSize, 0);
@@ -134,6 +144,9 @@ class Game {
     } else if (gameState['foodEaten'] === true) {
       this.createNewBlock(headX, headY, headId);
       this.createFoodBlock();
+      if (this.autoPlay) {
+        this.nextMoves = this.snake.nextMoves(this.snakeBlockSize, this.gameAreaWidth, this.gameAreaHeight, this.foodBlockPosition);
+      }
       this.setPoints(++this.points);
     } else {
       snakeHeadDiv.style.left = headX + 'px';
