@@ -7,15 +7,22 @@
     <link rel="stylesheet" type="text/css" href="style.css">
   </head>
   <body>
-    <div id="controls-container">
-      <div id="start-button" class="control-button">Start</div>
-      <div id="stop-button" class="control-button">Stop</div>
-      <div id="points">Points: 0</div>
+    <div id="controls-area">
+      <div class="controls-container">
+        <div id="start-button" class="button control-button">Start</div>
+        <div id="stop-button" class="button control-button">Stop</div>
+      </div>
+      <div class="controls-container">
+        <div id="autoplay-button" class="button">Autoplay</div>
+      </div>
+      <div class="controls-container">
+        <div id="points">Points: 0</div>
+      </div>
     </div>
     <div id="game-area"></div>
     <div id="game-over-layer">
       <p id="game-over-message">Game Over</p>
-      <div id="reset-button" class="control-button">New Game</div>
+      <div id="new-game-button" class="button">New Game</div>
     </div>
     <script src="snake.js"></script>
     <script src="game.js"></script>
