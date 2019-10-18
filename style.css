@@ -29,6 +29,10 @@
   display: inline-block;
 }
 
+.new-game-button {
+  margin: auto;
+}
+
 #points {
   display: block;
   margin: 15px 5px;
@@ -68,7 +72,7 @@
   font-family: sans-serif;
 }
 
-#reset-button {
+#new-game-container {
   position: absolute;
   bottom: 50px;
   left: 50%;

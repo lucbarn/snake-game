@@ -1,5 +1,20 @@
 class Block {
+  constructor() {
+    this.nextBlock = null;
+  }
+
+  getNextBlock() {
+    return this.nextBlock;
+  }
+
+  setNextBlock(nextBlock) {
+    this.nextBlock = nextBlock;
+  }
+}
+
+class SnakeBlock extends Block {
   constructor(position, id) {
+    super();
     // position is an array of length 2, which stores the cartesian coordinates of
     // the corresponding block of the snake
     this.position = position;
@@ -15,32 +30,16 @@ class Block {
     this.position = position;
   }
 
-  getNextBlock() {
-    return this.nextBlock;
-  }
-
-  setNextBlock(nextBlock) {
-    this.nextBlock = nextBlock;
-  }
-
   getId() {
     return this.id;
   }
 }
 
-class MoveBlock {
+class MoveBlock extends Block {
   constructor(moves, movementDirections) {
+    super();
     this.moves = moves;
     this.movementDirections = movementDirections;
-    this.nextBlock = null;
-  }
-
-  getNextBlock() {
-    return this.nextBlock;
-  }
-
-  setNextBlock(nextBlock) {
-    this.nextBlock = nextBlock;
   }
 
   getMovementDirection() {
@@ -74,7 +73,7 @@ class Snake {
     if (initialPositions.length == 0) {
       throw 'At least an initial block is needed to create the snake';
     }
-    const blocks = initialPositions.map((position, i) => new Block(position, i));
+    const blocks = initialPositions.map((position, i) => new SnakeBlock(position, i));
     // the list's head represents the tail of the snake
     this.snakeTail = blocks[0];
     // join the nodes of the linked list
@@ -101,7 +100,7 @@ class Snake {
     // if the snake eats the food block, a new block is created
     if (newBlockPosition[0] === foodBlockPosition[0]
         && newBlockPosition[1] === foodBlockPosition[1]) {
-      newBlock = new Block(newBlockPosition, ++this.lastId);
+      newBlock = new SnakeBlock(newBlockPosition, ++this.lastId);
       this.blocksSet.add(newBlockPosition[0] + '_' + newBlockPosition[1]);
       this.snakeHead.setNextBlock(newBlock);
       this.snakeHead = newBlock;
@@ -248,5 +247,3 @@ class Snake {
   }
 
 }
-
-module.exports = Snake;

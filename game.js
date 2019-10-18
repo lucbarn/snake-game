@@ -15,7 +15,7 @@ class Game {
     this.blocksMap = new Map();
     this.gameStarted = false;
     this.gameOver = false;
-    this.autoplay = true;
+    this.autoplay = false;
     this.nextMoves = [];
     this.points = 0;
     this.foodBlock = null;
