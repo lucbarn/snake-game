@@ -37,6 +37,7 @@ class Game {
   newGame() {
     this.gameStarted = false;
     this.gameOver = false;
+    this.autoplay = false;
     this.points = 0;
     this.setPoints(0);
     this.clearSnake();
@@ -44,9 +45,6 @@ class Game {
     this.snake = new Snake(this.initialPositions);
     this.snake.movementDirection = 'right';
     this.createFoodBlock();
-    if (this.autoplay) {
-      this.nextMoves = this.snake.nextMoves(this.snakeBlockSize, this.gameAreaWidth, this.gameAreaHeight, this.foodBlockPosition);
-    }
     this.gameOverLayer.style.display = 'none';
   }
 
@@ -81,9 +79,10 @@ class Game {
   }
 
   startAutoplay() {
-    this.autoplay = true;
     this.stopGame();
     this.newGame();
+    this.autoplay = true;
+    this.nextMoves = this.snake.nextMoves(this.snakeBlockSize, this.gameAreaWidth, this.gameAreaHeight, this.foodBlockPosition);
     this.startGame();
   }
 
