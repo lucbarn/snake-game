@@ -196,7 +196,7 @@ class Game {
       this.stopGame();
       this.gameOverLayer.style.display = 'block';
     } else if (gameState['foodEaten'] === true) {
-      this.createNewBlock(headX, headY, headId, isHead=true);
+      this.createNewBlock(headX, headY, headId, true);
       this.createFoodBlock();
       if (this.autoplay) {
         this.nextMoves = this.snake.nextMoves(this.snakeBlockSize, this.gameAreaWidth, this.gameAreaHeight, this.foodBlockPosition);
