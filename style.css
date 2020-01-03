@@ -79,16 +79,128 @@
   transform: translateX(-50%);
 }
 
-.snake-block {
+#moving-tail {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: blue;
+  animation-duration: 0.05s;
+  animation-fill-mode: forwards;
+  animation-timing-function: linear;
+}
+
+#moving-head {
+  position: absolute;
+  width: 0%;
+  height: 0%;
+  background-color: blue;
+  animation-duration: 0.05s;
+  animation-fill-mode: forwards;
+  animation-timing-function: linear;
+}
+
+.block {
   position: absolute;
   width: 15px;
   height: 15px;
+}
+
+.snake-block {
   background-color: blue;
 }
 
 .food-block {
-  position: absolute;
-  width: 15px;
-  height: 15px;
   background-color: red;
+}
+
+.transparent {
+  background-color: transparent !important;
+}
+
+.head-right-movement {
+  width: 0% !important;
+  height: 100% !important;
+  left: 0 !important;
+  animation-name: head-right-movement-animation;
+}
+
+@keyframes head-right-movement-animation {
+  to { width: 100%; }
+}
+
+.head-left-movement {
+  width: 0% !important;
+  height: 100% !important;
+  right: 0 !important;
+  animation-name: head-left-movement-animation;
+}
+
+@keyframes head-left-movement-animation {
+  to { width: 100%; }
+}
+
+.head-down-movement {
+  width: 100% !important;
+  height: 0% !important;
+  top: 0 !important;
+  animation-name: head-down-movement-animation;
+}
+
+@keyframes head-down-movement-animation {
+  to { height: 100%; }
+}
+
+.head-up-movement {
+  width: 100% !important;
+  height: 0% !important;
+  bottom: 0 !important;
+  animation-name: head-up-movement-animation;
+}
+
+@keyframes head-up-movement-animation {
+  to { height: 100%; }
+}
+
+.tail-right-movement {
+  width: 100% !important;
+  height: 100% !important;
+  right: 0 !important;
+  animation-name: tail-right-movement-animation;
+}
+
+@keyframes tail-right-movement-animation {
+  to { width: 0%; }
+}
+
+.tail-left-movement {
+  width: 100% !important;
+  height: 100% !important;
+  left: 0 !important;
+  animation-name: tail-left-movement-animation;
+}
+
+@keyframes tail-left-movement-animation {
+  to { width: 0%; }
+}
+
+.tail-down-movement {
+  width: 100% !important;
+  height: 100% !important;
+  bottom: 0 !important;
+  animation-name: tail-down-movement-animation;
+}
+
+@keyframes tail-down-movement-animation {
+  to { height: 0%; }
+}
+
+.tail-up-movement {
+  width: 100% !important;
+  height: 100% !important;
+  top: 0 !important;
+  animation-name: tail-up-movement-animation;
+}
+
+@keyframes tail-up-movement-animation {
+  to { height: 0%; }
 }

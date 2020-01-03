@@ -69,7 +69,7 @@ class Snake {
   // the position of the corresponding block of the snake. The blocks are in
   // reversed order with respect to the direction of movement of the snake
 
-  constructor(initialPositions, movementDirection) {
+  constructor(initialPositions, blockSize, movementDirection) {
     if (initialPositions.length == 0) {
       throw 'At least an initial block is needed to create the snake';
     }
@@ -86,37 +86,56 @@ class Snake {
     this.lastId = blocks.length-1;
     this.blocksNum = blocks.length;
     this.movementDirection = movementDirection;
+    this.blockSize = blockSize;
   }
 
-  move(dx, dy, gameAreaWidth, foodBlockPosition) {
+  move(dx, dy, gameAreaWidth, gameAreaHeight, foodBlockPosition) {
     let foodBlockEaten = false;
     let gameOver = false;
     const [headX, headY] = this.snakeHead.getPosition();
-    const newBlockPosition = [
+    const newHeadPosition = [
       (gameAreaWidth + headX + dx) % gameAreaWidth,
       (gameAreaHeight + headY + dy) % gameAreaHeight
     ];
-    let newBlock;
+    const oldTailPosition = this.snakeTail.getPosition();
+    let newHead;
+    let xTailMovementDir = 0;
+    let yTailMovementDir = 0;
+    let xHeadMovementDir = 0;
+    let yHeadMovementDir = 0;
     // if the snake eats the food block, a new block is created
-    if (newBlockPosition[0] === foodBlockPosition[0]
-        && newBlockPosition[1] === foodBlockPosition[1]) {
-      newBlock = new SnakeBlock(newBlockPosition, ++this.lastId);
-      this.blocksSet.add(newBlockPosition[0] + '_' + newBlockPosition[1]);
-      this.snakeHead.setNextBlock(newBlock);
-      this.snakeHead = newBlock;
+    if (newHeadPosition[0] === foodBlockPosition[0]
+        && newHeadPosition[1] === foodBlockPosition[1]) {
+      newHead = new SnakeBlock(newHeadPosition, ++this.lastId);
+      this.blocksSet.add(newHeadPosition[0] + '_' + newHeadPosition[1]);
+      this.snakeHead.setNextBlock(newHead);
+      this.snakeHead = newHead;
       foodBlockEaten = true;
       this.blocksNum++;
     // if the snake doesn't eat the food block, the block on the tail is moved
-    // to the head
+    // to the head's position
     } else {
-      const newSnakeHead = this.snakeTail;
-      const oldTailPosition = this.snakeTail.getPosition();
+      newHead = this.snakeTail;
       this.blocksSet.delete(oldTailPosition[0] + '_' + oldTailPosition[1]);
       this.snakeTail = this.snakeTail.getNextBlock();
-      this.snakeHead.setNextBlock(newSnakeHead);
-      this.snakeHead = newSnakeHead;
-      this.snakeHead.setPosition(newBlockPosition);
-      this.blocksSet.add(newBlockPosition[0] + '_' + newBlockPosition[1]);
+      this.snakeHead.setNextBlock(newHead);
+      this.snakeHead = newHead;
+      this.snakeHead.setPosition(newHeadPosition);
+      this.blocksSet.add(newHeadPosition[0] + '_' + newHeadPosition[1]);
+      if (oldTailPosition[0] === this.snakeTail.getPosition()[0]) {
+        // compute vertical animation for moving tail
+        yTailMovementDir = ((oldTailPosition[1] + this.blockSize) % gameAreaHeight === this.snakeTail.getPosition()[1]) ? 1 : -1;
+      } else {
+        // compute horizontal animation for moving tail
+        xTailMovementDir = ((oldTailPosition[0] + this.blockSize) % gameAreaWidth === this.snakeTail.getPosition()[0]) ? 1 : -1;
+      }
+    }
+    if (dx === 0) {
+      // compute vertical animation for moving head
+      yHeadMovementDir = (dy > 0) ? 1 : -1;
+    } else {
+      // compute horizontal animation for moving head
+      xHeadMovementDir = (dx > 0) ? 1 : -1;
     }
     // If two blocks overlap, the game is over
     if (this.blocksSet.size < this.blocksNum) {
@@ -126,7 +145,8 @@ class Snake {
       'foodEaten': foodBlockEaten,
       'gameOver': gameOver,
       'headId': this.snakeHead.getId(),
-      'headPosition': this.snakeHead.getPosition()
+      'positions': [this.snakeHead.getPosition(), oldTailPosition],
+      'movements': [xTailMovementDir, yTailMovementDir, xHeadMovementDir, yHeadMovementDir]
     };
     return gameState;
   }

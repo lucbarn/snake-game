@@ -1,6 +1,6 @@
 class Game {
 
-  constructor(gameAreaWidth, gameAreaHeight, snakeBlockSize) {
+  constructor(gameAreaWidth, gameAreaHeight, snakeBlockSize, initialPositions) {
     this.gameAreaWidth = gameAreaWidth;
     this.gameAreaHeight = gameAreaHeight;
     this.snakeBlockSize = snakeBlockSize;
@@ -11,7 +11,11 @@ class Game {
     this.newGameButton = document.getElementById('new-game-button');
     this.pointsDiv = document.getElementById('points');
     this.gameOverLayer = document.getElementById('game-over-layer');
-    this.initialPositions = [[0,0], [snakeBlockSize,0], [2*snakeBlockSize,0]];
+    this.snakeMovingTail = document.getElementById('moving-tail');
+    this.snakeMovingTailContainer = document.getElementById('moving-tail-container');
+    this.snakeMovingHead = document.getElementById('moving-head');
+    this.snakeMovingHeadContainer = document.getElementById('moving-head-container');
+    this.initialPositions = initialPositions;
     this.blocksMap = new Map();
     this.gameStarted = false;
     this.gameOver = false;
@@ -22,6 +26,7 @@ class Game {
     this.foodBlockPosition = null;
     this.snake = null;
     this.snakeMovement = null;
+    this.snakeHead = null;
   }
 
   init() {
@@ -42,8 +47,11 @@ class Game {
     this.setPoints(0);
     this.clearSnake();
     this.initialPositions.forEach((coordinates, i) => this.createNewBlock(...coordinates, i));
-    this.snake = new Snake(this.initialPositions);
-    this.snake.movementDirection = 'right';
+    this.snake = new Snake(this.initialPositions, this.snakeBlockSize, 'right');
+    this.snakeMovingTailContainer.style.left = this.initialPositions[0][0] + 'px';
+    this.snakeMovingTailContainer.style.top = this.initialPositions[0][1] + 'px';
+    this.snakeMovingHeadContainer.style.left = this.initialPositions[this.initialPositions.length-1][0] + 'px';
+    this.snakeMovingHeadContainer.style.top = this.initialPositions[this.initialPositions.length-1][1] + 'px';
     this.createFoodBlock();
     this.gameOverLayer.style.display = 'none';
   }
@@ -93,12 +101,20 @@ class Game {
     this.blocksMap.clear();
   }
 
-  createNewBlock(x, y, id) {
+  createNewBlock(x, y, id, isHead=false) {
     const newBlock = document.createElement('div');
-    newBlock.setAttribute('class', 'snake-block');
+    newBlock.classList.add('block');
+    newBlock.classList.add('snake-block');
     newBlock.style.left = x + 'px';
     newBlock.style.top = y + 'px';
     this.blocksMap.set(id, newBlock);
+    if (isHead) {
+      if (this.snakeHead != null) {
+        this.snakeHead.classList.remove('transparent');
+      }
+      newBlock.classList.add('transparent');
+      this.snakeHead = newBlock;
+    }
     this.gameArea.appendChild(newBlock);
   }
 
@@ -125,7 +141,8 @@ class Game {
   createFoodBlock() {
     const [x,y] = this.getNewFoodPosition();
     const newFoodBlock = document.createElement('div');
-    newFoodBlock.setAttribute('class', 'food-block');
+    newFoodBlock.classList.add('block');
+    newFoodBlock.classList.add('food-block');
     newFoodBlock.style.left = x + 'px';
     newFoodBlock.style.top = y + 'px';
     if (this.foodBlock) {
@@ -140,9 +157,38 @@ class Game {
     this.pointsDiv.innerText = `Points: ${this.points}`;
   }
 
+  animateSnake(movements, headOnly) {
+    const [xTailMovementDir, yTailMovementDir, xHeadMovementDir, yHeadMovementDir] = movements;
+    if (xHeadMovementDir === 1) {
+      this.snakeMovingHead.classList.add('head-right-movement');
+    } else if (xHeadMovementDir === -1) {
+      this.snakeMovingHead.classList.add('head-left-movement');
+    } else if (yHeadMovementDir === 1) {
+      this.snakeMovingHead.classList.add('head-down-movement');
+    } else {
+      this.snakeMovingHead.classList.add('head-up-movement');
+    }
+    if (!headOnly) {
+      if (xTailMovementDir === 1) {
+        this.snakeMovingTail.classList.add('tail-right-movement');
+      } else if (xTailMovementDir === -1) {
+        this.snakeMovingTail.classList.add('tail-left-movement');
+      } else if (yTailMovementDir === 1) {
+        this.snakeMovingTail.classList.add('tail-down-movement');
+      } else {
+        this.snakeMovingTail.classList.add('tail-up-movement');
+      }
+    }
+  }
+
+  nextMove() {
+    this.moveSnake(this.snakeBlockSize, 0);
+  }
+
   moveSnake(dx, dy) {
-    const gameState = this.snake.move(dx, dy, this.gameAreaWidth, this.foodBlockPosition);
-    const {foodEaten, gameOver, headId, headPosition} = gameState;
+    const gameState = this.snake.move(dx, dy, this.gameAreaWidth, this.gameAreaHeight, this.foodBlockPosition);
+    const {foodEaten, gameOver, headId, positions, movements} = gameState;
+    const [headPosition, oldTailPosition] = positions;
     const snakeHeadDiv = this.blocksMap.get(headId);
     const [headX, headY] = headPosition;
     if (gameState['gameOver'] === true) {
@@ -150,15 +196,33 @@ class Game {
       this.stopGame();
       this.gameOverLayer.style.display = 'block';
     } else if (gameState['foodEaten'] === true) {
-      this.createNewBlock(headX, headY, headId);
+      this.createNewBlock(headX, headY, headId, isHead=true);
       this.createFoodBlock();
       if (this.autoplay) {
         this.nextMoves = this.snake.nextMoves(this.snakeBlockSize, this.gameAreaWidth, this.gameAreaHeight, this.foodBlockPosition);
       }
       this.setPoints(++this.points);
+      this.snakeMovingHead.className = '';
+      this.snakeMovingHeadContainer.style.left = headX + 'px';
+      this.snakeMovingHeadContainer.style.top = headY + 'px';
+      this.animateSnake(movements, true);
     } else {
+      this.snakeMovingTailContainer.style.left = oldTailPosition[0] + 'px';
+      this.snakeMovingTailContainer.style.top = oldTailPosition[1] + 'px';
+      this.snakeMovingTail.className = '';
+      this.snakeMovingTail.offsetHeight;
+      if (this.snakeHead != null) {
+        this.snakeHead.classList.remove('transparent');
+      }
+      snakeHeadDiv.classList.add('transparent');
+      this.snakeHead = snakeHeadDiv;
       snakeHeadDiv.style.left = headX + 'px';
       snakeHeadDiv.style.top = headY + 'px';
+      this.snakeMovingHead.className = '';
+      this.snakeMovingHead.offsetHeight;
+      this.snakeMovingHeadContainer.style.left = headX + 'px';
+      this.snakeMovingHeadContainer.style.top = headY + 'px';
+      this.animateSnake(movements, false);
     }
   }
 
