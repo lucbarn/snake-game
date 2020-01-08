@@ -26,7 +26,7 @@ class Game {
     this.foodBlockPosition = null;
     this.snake = null;
     this.snakeMovement = null;
-    this.snakeHead = null;
+    this.snakeOldHead = null;
   }
 
   init() {
@@ -109,11 +109,11 @@ class Game {
     newBlock.style.top = y + 'px';
     this.blocksMap.set(id, newBlock);
     if (isHead) {
-      if (this.snakeHead != null) {
-        this.snakeHead.classList.remove('transparent');
+      if (this.snakeOldHead != null) {
+        this.snakeOldHead.classList.remove('transparent');
       }
       newBlock.classList.add('transparent');
-      this.snakeHead = newBlock;
+      this.snakeOldHead = newBlock;
     }
     this.gameArea.appendChild(newBlock);
   }
@@ -202,26 +202,38 @@ class Game {
         this.nextMoves = this.snake.nextMoves(this.snakeBlockSize, this.gameAreaWidth, this.gameAreaHeight, this.foodBlockPosition);
       }
       this.setPoints(++this.points);
+      // empty moving head's background by removing its class
       this.snakeMovingHead.className = '';
+      // move moving head to the new head's position
       this.snakeMovingHeadContainer.style.left = headX + 'px';
       this.snakeMovingHeadContainer.style.top = headY + 'px';
+      // trigger animation of head
       this.animateSnake(movements, true);
     } else {
+      // move (empty) moving tail to the old tail's position
       this.snakeMovingTailContainer.style.left = oldTailPosition[0] + 'px';
       this.snakeMovingTailContainer.style.top = oldTailPosition[1] + 'px';
+      // fill moving tail's background by removing its class so that it falls back to its
+      // default style
       this.snakeMovingTail.className = '';
+      // without offsetHeight the same animation (i.e. in the same direction)
+      // cannot be triggered more than once
       this.snakeMovingTail.offsetHeight;
-      if (this.snakeHead != null) {
-        this.snakeHead.classList.remove('transparent');
+      if (this.snakeOldHead != null) {
+        this.snakeOldHead.classList.remove('transparent');
       }
       snakeHeadDiv.classList.add('transparent');
-      this.snakeHead = snakeHeadDiv;
+      this.snakeOldHead = snakeHeadDiv;
+      // move snake's last block to the new head position
       snakeHeadDiv.style.left = headX + 'px';
       snakeHeadDiv.style.top = headY + 'px';
+      // empty moving head's background by removing its class
       this.snakeMovingHead.className = '';
       this.snakeMovingHead.offsetHeight;
+      // move moving head to the new head's position
       this.snakeMovingHeadContainer.style.left = headX + 'px';
       this.snakeMovingHeadContainer.style.top = headY + 'px';
+      // trigger animation of both tail and head
       this.animateSnake(movements, false);
     }
   }
