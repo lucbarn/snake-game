@@ -120,6 +120,7 @@ class Snake {
       this.snakeTail = this.snakeTail.getNextBlock();
       this.snakeHead.setNextBlock(newHead);
       this.snakeHead = newHead;
+      this.snakeHead.setNextBlock(null);
       this.snakeHead.setPosition(newHeadPosition);
       this.blocksSet.add(newHeadPosition[0] + '_' + newHeadPosition[1]);
       if (oldTailPosition[0] === this.snakeTail.getPosition()[0]) {

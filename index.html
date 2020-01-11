@@ -8,12 +8,16 @@
   </head>
   <body>
     <div id="controls-area">
+
+      <h4>Mode:</h4>
+      <div class="controls-container">
+        <div id="normal-mode-button" class="button control-button blue-button">Normal</div>
+        <div id="auto-mode-button" class="button control-button">Auto</div>
+      </div>
+
       <div class="controls-container">
         <div id="start-button" class="button control-button">Start</div>
         <div id="stop-button" class="button control-button">Stop</div>
-      </div>
-      <div class="controls-container">
-        <div id="autoplay-button" class="button">Autoplay</div>
       </div>
       <div class="controls-container">
         <div id="points">Points: 0</div>
@@ -30,7 +34,7 @@
     <div id="game-over-layer">
       <p id="game-over-message">Game Over</p>
       <div id="new-game-container" class='controls-container'>
-        <div id='new-game-button' class="button new-game-button">New Game</div>
+        <div id='new-game-button' class="button new-game-button blue-button">New Game</div>
       </div>
     </div>
     <script src="snake.js"></script>

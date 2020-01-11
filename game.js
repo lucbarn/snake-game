@@ -15,11 +15,14 @@ class Game {
     this.snakeMovingTailContainer = document.getElementById('moving-tail-container');
     this.snakeMovingHead = document.getElementById('moving-head');
     this.snakeMovingHeadContainer = document.getElementById('moving-head-container');
+    this.normalModeButton = document.getElementById('normal-mode-button');
+    this.autoModeButton = document.getElementById('auto-mode-button');
     this.initialPositions = initialPositions;
     this.blocksMap = new Map();
     this.gameStarted = false;
     this.gameOver = false;
     this.autoplay = false;
+    this.slowSpeed = false;
     this.nextMoves = [];
     this.points = 0;
     this.foodBlock = null;
@@ -30,20 +33,32 @@ class Game {
   }
 
   init() {
-    if (!this.autoplay) {
-      window.addEventListener('keydown', this.f.bind(this));
-    }
     this.startButton.addEventListener('click', this.startGame.bind(this));
     this.stopButton.addEventListener('click', this.stopGame.bind(this));
-    this.autoplayButton.addEventListener('click', this.startAutoplay.bind(this));
+    // this.autoplayButton.addEventListener('click', this.startAutoplay.bind(this));
     this.newGameButton.addEventListener('click', this.newGame.bind(this));
+    this.normalModeButton.addEventListener('click', this.setNormalMode.bind(this));
+    this.autoModeButton.addEventListener('click', this.setAutoMode.bind(this));
+  }
+
+  setNormalMode() {
+    this.autoplay = false;
+    window.addEventListener('keydown', this.getDirection.bind(this));
+    this.autoModeButton.classList.remove('option-selected');
+    this.normalModeButton.classList.add('option-selected');
+  }
+
+  setAutoMode() {
+    this.autoplay = true;
+    this.nextMoves = this.snake.nextMoves(this.snakeBlockSize, this.gameAreaWidth, this.gameAreaHeight, this.foodBlockPosition);
+    window.removeEventListener('keydown', this.getDirection.bind(this));
+    this.normalModeButton.classList.remove('option-selected');
+    this.autoModeButton.classList.add('option-selected');
   }
 
   newGame() {
     this.gameStarted = false;
     this.gameOver = false;
-    this.autoplay = false;
-    this.points = 0;
     this.setPoints(0);
     this.clearSnake();
     this.initialPositions.forEach((coordinates, i) => this.createNewBlock(...coordinates, i));
@@ -53,6 +68,7 @@ class Game {
     this.snakeMovingHeadContainer.style.left = this.initialPositions[this.initialPositions.length-1][0] + 'px';
     this.snakeMovingHeadContainer.style.top = this.initialPositions[this.initialPositions.length-1][1] + 'px';
     this.createFoodBlock();
+    this.setNormalMode();
     this.gameOverLayer.style.display = 'none';
   }
 
@@ -84,14 +100,6 @@ class Game {
   stopGame() {
     clearInterval(this.snakeMovement);
     this.gameStarted = false;
-  }
-
-  startAutoplay() {
-    this.stopGame();
-    this.newGame();
-    this.autoplay = true;
-    this.nextMoves = this.snake.nextMoves(this.snakeBlockSize, this.gameAreaWidth, this.gameAreaHeight, this.foodBlockPosition);
-    this.startGame();
   }
 
   clearSnake() {
@@ -154,6 +162,7 @@ class Game {
   }
 
   setPoints(n) {
+    this.points = n;
     this.pointsDiv.innerText = `Points: ${this.points}`;
   }
 
@@ -238,7 +247,7 @@ class Game {
     }
   }
 
-  f(event) {
+  getDirection(event) {
     switch (event.which) {
       // the snake cannot invert its course
       case 37:

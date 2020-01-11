@@ -6,16 +6,21 @@
   flex-wrap: wrap;
 }
 
+#controls-area h4 {
+  width: 100%;
+}
+
 .controls-container {
   width: 100%;
   display: flex;
   margin: 5px 0px;
 }
 
+
 .button {
-  color: white;
   font-family: sans-serif;
-  background-color: #005aff;
+  color: #3e5777;
+  background-color: #d9e9f5;
   padding: 10px 30px;
   margin: 0px 5px;
   border-radius: 3px;
@@ -27,6 +32,12 @@
 
 .control-button {
   display: inline-block;
+  width: 65px;
+}
+
+.blue-button {
+  color: white;
+  background-color: #417be8;
 }
 
 .new-game-button {
