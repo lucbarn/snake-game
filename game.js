@@ -44,16 +44,16 @@ class Game {
   setNormalMode() {
     this.autoplay = false;
     window.addEventListener('keydown', this.getDirection.bind(this));
-    this.autoModeButton.classList.remove('option-selected');
-    this.normalModeButton.classList.add('option-selected');
+    this.autoModeButton.classList.remove('blue-button');
+    this.normalModeButton.classList.add('blue-button');
   }
 
   setAutoMode() {
     this.autoplay = true;
     this.nextMoves = this.snake.nextMoves(this.snakeBlockSize, this.gameAreaWidth, this.gameAreaHeight, this.foodBlockPosition);
     window.removeEventListener('keydown', this.getDirection.bind(this));
-    this.normalModeButton.classList.remove('option-selected');
-    this.autoModeButton.classList.add('option-selected');
+    this.normalModeButton.classList.remove('blue-button');
+    this.autoModeButton.classList.add('blue-button');
   }
 
   newGame() {
