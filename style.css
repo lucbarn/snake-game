@@ -1,13 +1,15 @@
 #controls-area {
   position: absolute;
-  top: 50px;
   left: 50px;
   display: flex;
   flex-wrap: wrap;
 }
 
-#controls-area h4 {
-  width: 100%;
+.controls-tag {
+  font-family: sans-serif;
+  font-weight: bold;
+  color: #3e5777;
+  margin-top: 30px;
 }
 
 .controls-container {
@@ -22,8 +24,9 @@
   color: #3e5777;
   background-color: #d9e9f5;
   padding: 10px 30px;
-  margin: 0px 5px;
+  margin-right: 10px;
   border-radius: 3px;
+  text-align: center;
 }
 
 .button:hover {
@@ -46,9 +49,15 @@
 
 #points {
   display: block;
-  margin: 15px 5px;
+  margin: 40px 5px;
   font-family: sans-serif;
+  color: #3e5777;
+}
+
+#points-value {
   font-weight: bold;
+  font-size: 26px;
+  color: inherit;
 }
 
 #game-area {

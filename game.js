@@ -9,7 +9,7 @@ class Game {
     this.stopButton = document.getElementById('stop-button');
     this.autoplayButton = document.getElementById('autoplay-button');
     this.newGameButton = document.getElementById('new-game-button');
-    this.pointsDiv = document.getElementById('points');
+    this.pointsValue = document.getElementById('points-value');
     this.gameOverLayer = document.getElementById('game-over-layer');
     this.snakeMovingTail = document.getElementById('moving-tail');
     this.snakeMovingTailContainer = document.getElementById('moving-tail-container');
@@ -163,7 +163,7 @@ class Game {
 
   setPoints(n) {
     this.points = n;
-    this.pointsDiv.innerText = `Points: ${this.points}`;
+    this.pointsValue.innerText = `${this.points}`;
   }
 
   animateSnake(movements, headOnly) {
