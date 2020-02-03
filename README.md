@@ -1,13 +1,13 @@
-# snake-game
+# Snake
 
-A web version of the game Snake, created using HTML5, CSS3 and JavaScript (ES6).
+A web version of the game Snake, created using HTML5, CSS3 and JavaScript.
 
 ## Usage
 Click on the start button and use the arrow keys to move the snake and eat the food
 blocks, avoiding collisions with the snake itself. The snake can move through the walls.
 
 ## Animation
-The animation of the snake is achieved through a mix of JavaScript and CSS. Two HTML
+The animation of the snake is created with JavaScript and CSS. Two HTML
 divs serve as containers for the snake's tail and head that shrink and expand,
 respectively. The following sequence of steps is used to create the animation:
 
@@ -29,7 +29,10 @@ does not move and a new block is created in the head's position.
 
 ## Auto mode
 
-The auto mode can be selected by clicking on the respective button. The game mode can be selected before the game starts but it can also be changed when the game has already started.
+The auto mode can be selected by clicking on the respective button before the game starts. The game mode can also be changed when the game has already started.
 
-A breadth-first search is used to find the shortest path to the food block. The
-sequence of moves is then used to reach the position of the food block.
+A breadth-first search is used to find the shortest path to the food block and to obtain the sequence of moves to reach it. The position of the snake's head is stored in a set in order to keep the time and space complexity of the search under control. Even tough it  does not in itself represent a visited state since the position of the other blocks should also be considered, it works well in most practical cases.
+
+## Example
+
+The game can be played at http://snake-game-js-project.s3-website.eu-central-1.amazonaws.com
