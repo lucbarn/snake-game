@@ -35,4 +35,4 @@ A breadth-first search is used to find the shortest path to the food block and t
 
 ## Example
 
-The game can be played at http://snake-game-js-project.s3-website.eu-central-1.amazonaws.com
+The game can be played at https://lucbarn.github.io/snake-game/
