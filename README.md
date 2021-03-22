@@ -33,6 +33,6 @@ The auto mode can be selected by clicking on the respective button before the ga
 
 A breadth-first search is used to find the shortest path to the food block and to obtain the sequence of moves to reach it. The position of the snake's head is stored in a set in order to keep the time and space complexity of the search under control. Even tough it  does not in itself represent a visited state since the position of the other blocks should also be considered, it works well in most practical cases.
 
-## Example
+## Live version
 
 The game can be played at https://lucbarn.github.io/snake-game/
