@@ -21,6 +21,7 @@ class Snake {
     this.lastId = blocks.length-1;
     this.blocksNum = blocks.length;
     this.movementDirection = movementDirection;
+    this.nextMovementDirection = movementDirection;
     this.blockSize = blockSize;
   }
 

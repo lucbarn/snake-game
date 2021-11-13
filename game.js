@@ -35,7 +35,6 @@ class Game {
   init() {
     this.startButton.addEventListener('click', this.startGame.bind(this));
     this.stopButton.addEventListener('click', this.stopGame.bind(this));
-    // this.autoplayButton.addEventListener('click', this.startAutoplay.bind(this));
     this.newGameButton.addEventListener('click', this.newGame.bind(this));
     this.normalModeButton.addEventListener('click', this.setNormalMode.bind(this));
     this.autoModeButton.addEventListener('click', this.setAutoMode.bind(this));
@@ -77,9 +76,9 @@ class Game {
       this.gameStarted = true;
       this.snakeMovement = setInterval(() => {
         if (this.autoplay && this.nextMoves.length > 0) {
-          this.snake.movementDirection = this.nextMoves.pop();
+          this.snake.nextMovementDirection = this.nextMoves.pop();
         }
-        switch (this.snake.movementDirection) {
+        switch (this.snake.nextMovementDirection) {
           case 'left':
             this.moveSnake(-this.snakeBlockSize, 0);
             break;
@@ -129,7 +128,7 @@ class Game {
   getNewFoodPosition() {
     let x = Math.floor(Math.random() * this.gameAreaWidth / this.snakeBlockSize) * this.snakeBlockSize;
     let y = Math.floor(Math.random() * this.gameAreaHeight / this.snakeBlockSize) * this.snakeBlockSize;
-    // check that the food block position doesn't overlap with the position of one of the snake's blocks
+    // check that the food block position doesn't overlap with the position of one of the snake's blocks;
     // if it does, find the first available position
     if (this.snake.hasBlock(`${x}_${y}`)) {
       for (let dx = 0; dx < this.gameAreaWidth; dx += this.snakeBlockSize) {
@@ -244,6 +243,8 @@ class Game {
       this.snakeMovingHeadContainer.style.top = headY + 'px';
       // trigger animation of both tail and head
       this.animateSnake(movements, false);
+      // update snakes's movement direction
+      this.snake.movementDirection = this.snake.nextMovementDirection;
     }
   }
 
@@ -252,22 +253,22 @@ class Game {
       // the snake cannot invert its course
       case 37:
         if (this.snake.movementDirection !== 'right') {
-          this.snake.movementDirection = 'left';
+          this.snake.nextMovementDirection = 'left';
         }
         break;
       case 38:
         if (this.snake.movementDirection !== 'down') {
-          this.snake.movementDirection = 'up';
+          this.snake.nextMovementDirection = 'up';
         }
         break;
       case 39:
         if (this.snake.movementDirection !== 'left') {
-          this.snake.movementDirection = 'right';
+          this.snake.nextMovementDirection = 'right';
         }
         break;
       case 40:
         if (this.snake.movementDirection !== 'up') {
-          this.snake.movementDirection = 'down';
+          this.snake.nextMovementDirection = 'down';
         }
         break;
     }
