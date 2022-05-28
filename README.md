@@ -31,7 +31,7 @@ does not move and a new block is created in the head's position.
 
 The auto mode can be selected by clicking on the respective button before the game starts. The game mode can also be changed when the game has already started.
 
-A breadth-first search is used to find the shortest path to the food block and to obtain the sequence of moves to reach it. The position of the snake's head is stored in a set in order to keep the time and space complexity of the search under control. Even tough it  does not in itself represent a visited state since the position of the other blocks should also be considered, it works well in most practical cases.
+A breadth-first search is used to find the shortest path to the food block and to obtain the sequence of moves to reach it. The position of the snake's head is stored in a set in order to keep the time and space complexity of the search under control. Even though it does not in itself represent a visited state since the position of the other blocks should also be considered, it works well in most practical cases.
 
 ## Live version
 

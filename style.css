@@ -111,12 +111,13 @@
 
 #moving-head {
   position: absolute;
-  width: 0%;
-  height: 0%;
+  width: 100%;
+  height: 100%;
   background-color: #3737ae;
   animation-duration: 0.05s;
   animation-fill-mode: forwards;
   animation-timing-function: linear;
+  transform: scale(0);
 }
 
 .block {
@@ -139,89 +140,81 @@
 }
 
 #moving-head.head-right-movement {
-  width: 0%;
-  height: 100%;
-  left: 0;
   animation-name: head-right-movement-animation;
+  transform: scaleX(0);
+  transform-origin: left;
 }
 
 @keyframes head-right-movement-animation {
-  to { width: 100%; }
+  to { transform: scaleX(1); }
 }
 
 #moving-head.head-left-movement {
-  width: 0%;
-  height: 100%;
-  right: 0;
   animation-name: head-left-movement-animation;
+  transform: scaleX(0);
+  transform-origin: right;
 }
 
 @keyframes head-left-movement-animation {
-  to { width: 100%; }
+  to { transform: scaleX(1); }
 }
 
 #moving-head.head-down-movement {
-  width: 100%;
-  height: 0%;
-  top: 0;
   animation-name: head-down-movement-animation;
+  transform: scaleY(0);
+  transform-origin: top;
 }
 
 @keyframes head-down-movement-animation {
-  to { height: 100%; }
+  to { transform: scaleY(1); }
 }
 
 #moving-head.head-up-movement {
-  width: 100%;
-  height: 0%;
-  bottom: 0;
   animation-name: head-up-movement-animation;
+  transform: scaleY(0);
+  transform-origin: bottom;
 }
 
 @keyframes head-up-movement-animation {
-  to { height: 100%; }
+  to { transform: scaleY(1); }
 }
 
 #moving-tail.tail-right-movement {
-  width: 100%;
-  height: 100%;
-  right: 0;
   animation-name: tail-right-movement-animation;
+  transform: scaleX(1);
+  transform-origin: right;
 }
 
 @keyframes tail-right-movement-animation {
-  to { width: 0%; }
+  to { transform: scaleX(0); }
 }
 
 #moving-tail.tail-left-movement {
-  width: 100%;
-  height: 100%;
-  left: 0;
   animation-name: tail-left-movement-animation;
+  transform: scaleX(1);
+  transform-origin: left;
 }
 
 @keyframes tail-left-movement-animation {
-  to { width: 0%; }
+  to { transform: scaleX(0); }
 }
 
 #moving-tail.tail-down-movement {
-  width: 100%;
-  height: 100%;
-  bottom: 0;
   animation-name: tail-down-movement-animation;
+  transform: scaleY(1);
+  transform-origin: bottom;
 }
 
 @keyframes tail-down-movement-animation {
-  to { height: 0%; }
+  to { transform: scaleY(0); }
 }
 
 #moving-tail.tail-up-movement {
-  width: 100%;
-  height: 100%;
-  top: 0;
   animation-name: tail-up-movement-animation;
+  transform: scaleY(1);
+  transform-origin: top;
 }
 
 @keyframes tail-up-movement-animation {
-  to { height: 0%; }
+  to { transform: scaleY(0); }
 }
