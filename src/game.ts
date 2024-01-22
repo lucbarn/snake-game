@@ -1,43 +1,76 @@
-class Game {
+import { Point, MovementDirection, SnakeBlock, MoveBlock, pointToString, areSamePoints, InitialBlocksPositions } from "./blocks";
+import { Snake } from './snake';
 
-  constructor(gameAreaWidth, gameAreaHeight, snakeBlockSize, initialPositions) {
+export class Game {
+  gameAreaWidth: number;
+  gameAreaHeight: number;
+  snakeBlockSize: number;
+  gameArea: HTMLElement;
+  startButton: HTMLElement;
+  stopButton: HTMLElement;
+  autoplayButton: HTMLElement;
+  newGameButton: HTMLElement;
+  pointsValue: HTMLElement;
+  gameOverLayer: HTMLElement;
+  snakeMovingTail: HTMLElement;
+  snakeMovingTailContainer: HTMLElement;
+  snakeMovingHead: HTMLElement;
+  snakeMovingHeadContainer: HTMLElement;
+  normalModeButton: HTMLElement;
+  autoModeButton: HTMLElement;
+  initialPositions: InitialBlocksPositions;
+  blocksMap: Map<number, HTMLElement>;
+  gameStarted: boolean;
+  gameOver: boolean;
+  autoplay: boolean;
+  nextMoves: MovementDirection[];
+  points: number;
+  foodBlock: HTMLElement;
+  foodBlockPosition: Point;
+  snake: Snake;
+  snakeMovement: ReturnType<typeof setTimeout>;
+  snakeOldHead: HTMLElement;
+
+  constructor(gameAreaWidth: number, gameAreaHeight: number, snakeBlockSize: number, initialPositions: InitialBlocksPositions) {
     this.gameAreaWidth = gameAreaWidth;
     this.gameAreaHeight = gameAreaHeight;
     this.snakeBlockSize = snakeBlockSize;
-    this.gameArea = document.getElementById('game-area');
-    this.startButton = document.getElementById('start-button');
-    this.stopButton = document.getElementById('stop-button');
-    this.autoplayButton = document.getElementById('autoplay-button');
-    this.newGameButton = document.getElementById('new-game-button');
-    this.pointsValue = document.getElementById('points-value');
-    this.gameOverLayer = document.getElementById('game-over-layer');
-    this.snakeMovingTail = document.getElementById('moving-tail');
-    this.snakeMovingTailContainer = document.getElementById('moving-tail-container');
-    this.snakeMovingHead = document.getElementById('moving-head');
-    this.snakeMovingHeadContainer = document.getElementById('moving-head-container');
-    this.normalModeButton = document.getElementById('normal-mode-button');
-    this.autoModeButton = document.getElementById('auto-mode-button');
     this.initialPositions = initialPositions;
-    this.blocksMap = new Map();
-    this.gameStarted = false;
-    this.gameOver = false;
-    this.autoplay = false;
-    this.slowSpeed = false;
-    this.nextMoves = [];
-    this.points = 0;
-    this.foodBlock = null;
-    this.foodBlockPosition = null;
-    this.snake = null;
-    this.snakeMovement = null;
-    this.snakeOldHead = null;
+    this.init();
+  }
+
+  initHTMLElements() {
+    this.gameArea = this.getHtmlElementOrFail('game-area');
+    this.startButton = this.getHtmlElementOrFail('start-button');
+    this.stopButton = this.getHtmlElementOrFail('stop-button');
+    this.newGameButton = this.getHtmlElementOrFail('new-game-button');
+    this.pointsValue = this.getHtmlElementOrFail('points-value');
+    this.gameOverLayer = this.getHtmlElementOrFail('game-over-layer');
+    this.snakeMovingTail = this.getHtmlElementOrFail('moving-tail');
+    this.snakeMovingTailContainer = this.getHtmlElementOrFail('moving-tail-container');
+    this.snakeMovingHead = this.getHtmlElementOrFail('moving-head');
+    this.snakeMovingHeadContainer = this.getHtmlElementOrFail('moving-head-container');
+    this.normalModeButton = this.getHtmlElementOrFail('normal-mode-button');
+    this.autoModeButton = this.getHtmlElementOrFail('auto-mode-button');
+  }
+
+  getHtmlElementOrFail(id: string): HTMLElement {
+    const element = document.getElementById(id);
+    if (element === null) {
+      throw 'Could not find element with id ' + id + '.';
+    }
+    return element;
   }
 
   init() {
+    this.initHTMLElements();
     this.startButton.addEventListener('click', this.startGame.bind(this));
     this.stopButton.addEventListener('click', this.stopGame.bind(this));
     this.newGameButton.addEventListener('click', this.newGame.bind(this));
     this.normalModeButton.addEventListener('click', this.setNormalMode.bind(this));
     this.autoModeButton.addEventListener('click', this.setAutoMode.bind(this));
+    this.blocksMap = new Map();
+    this.nextMoves = [];
   }
 
   setNormalMode() {
@@ -76,7 +109,10 @@ class Game {
       this.gameStarted = true;
       this.snakeMovement = setInterval(() => {
         if (this.autoplay && this.nextMoves.length > 0) {
-          this.snake.nextMovementDirection = this.nextMoves.pop();
+          const nextMove = this.nextMoves.pop();
+          if (nextMove != undefined) {
+            this.snake.nextMovementDirection = nextMove;
+          }
         }
         switch (this.snake.nextMovementDirection) {
           case 'left':
@@ -108,7 +144,7 @@ class Game {
     this.blocksMap.clear();
   }
 
-  createNewBlock(x, y, id, isHead=false) {
+  createNewBlock(x: number, y: number, id: number, isHead=false) {
     const newBlock = document.createElement('div');
     newBlock.classList.add('block');
     newBlock.classList.add('snake-block');
@@ -125,28 +161,34 @@ class Game {
     this.gameArea.appendChild(newBlock);
   }
 
-  getNewFoodPosition() {
+  getNewFoodPosition(): Point | null {
     let x = Math.floor(Math.random() * this.gameAreaWidth / this.snakeBlockSize) * this.snakeBlockSize;
     let y = Math.floor(Math.random() * this.gameAreaHeight / this.snakeBlockSize) * this.snakeBlockSize;
     // check that the food block position doesn't overlap with the position of one of the snake's blocks;
     // if it does, find the first available position
-    if (this.snake.hasBlock(`${x}_${y}`)) {
+    if (this.snake.hasBlock([x,y])) {
       for (let dx = 0; dx < this.gameAreaWidth; dx += this.snakeBlockSize) {
         for (let dy = 0; dy < this.gameAreaHeight; dy += this.snakeBlockSize) {
-          if (!this.snake.hasBlock(`${(x + dx) % this.gameAreaWidth}_${(y + dy) % this.gameAreaHeight}`)) {
-            x = (x + dx) % this.gameAreaWidth;
-            y = (y + dy) % this.gameAreaHeight;
-            return [x,y];
+          const x2 = (x + dx) % this.gameAreaWidth;
+          const y2 = (y + dy) % this.gameAreaHeight;
+          if (!this.snake.hasBlock([x2,y2])) {
+            return [x2,y2];
           }
         }
       }
+      return null;
     } else {
       return [x,y];
     }
   }
 
   createFoodBlock() {
-    const [x,y] = this.getNewFoodPosition();
+    const optionalNewFoodPosition = this.getNewFoodPosition();
+    if (optionalNewFoodPosition == null) {
+      this.setGameOver();
+      return;
+    }
+    const [x,y] = optionalNewFoodPosition;
     const newFoodBlock = document.createElement('div');
     newFoodBlock.classList.add('block');
     newFoodBlock.classList.add('food-block');
@@ -160,12 +202,12 @@ class Game {
     this.gameArea.appendChild(newFoodBlock);
   }
 
-  setPoints(n) {
+  setPoints(n: number) {
     this.points = n;
     this.pointsValue.innerText = `${this.points}`;
   }
 
-  animateSnake(movements, headOnly) {
+  animateSnake(movements: number[], headOnly: boolean) {
     const [xTailMovementDir, yTailMovementDir, xHeadMovementDir, yHeadMovementDir] = movements;
     if (xHeadMovementDir === 1) {
       this.snakeMovingHead.classList.add('head-right-movement');
@@ -189,23 +231,29 @@ class Game {
     }
   }
 
+  setGameOver() {
+    this.gameOver = true;
+    this.stopGame();
+    this.gameOverLayer.style.display = 'block';
+  }
+
   nextMove() {
     this.moveSnake(this.snakeBlockSize, 0);
   }
 
-  moveSnake(dx, dy) {
+  moveSnake(dx: number, dy: number) {
     const gameState = this.snake.move(dx, dy, this.gameAreaWidth, this.gameAreaHeight, this.foodBlockPosition);
-    const {foodEaten, gameOver, headId, positions, movements} = gameState;
+    const {isFoodEaten, isGameOver, headId, positions, movements} = gameState;
     const [headPosition, oldTailPosition] = positions;
-    const snakeHeadDiv = this.blocksMap.get(headId);
     const [headX, headY] = headPosition;
-    if (gameState['gameOver'] === true) {
-      this.gameOver = true;
-      this.stopGame();
-      this.gameOverLayer.style.display = 'block';
-    } else if (gameState['foodEaten'] === true) {
+    if (isGameOver) {
+      this.setGameOver();
+    } else if (isFoodEaten) {
+      console.log('Food eaten');
       this.createNewBlock(headX, headY, headId, true);
+      console.log('Block created');
       this.createFoodBlock();
+      console.log('Food block created');
       if (this.autoplay) {
         this.nextMoves = this.snake.nextMoves(this.snakeBlockSize, this.gameAreaWidth, this.gameAreaHeight, this.foodBlockPosition);
       }
@@ -218,6 +266,10 @@ class Game {
       // trigger animation of head
       this.animateSnake(movements, true);
     } else {
+      const snakeHeadDiv = this.blocksMap.get(headId);
+      if (snakeHeadDiv == undefined) {
+        throw 'Invalid state';
+      }
       // move (empty) moving tail to the old tail's position
       this.snakeMovingTailContainer.style.left = oldTailPosition[0] + 'px';
       this.snakeMovingTailContainer.style.top = oldTailPosition[1] + 'px';
@@ -248,7 +300,7 @@ class Game {
     }
   }
 
-  getDirection(event) {
+  getDirection(event: KeyboardEvent) {
     switch (event.which) {
       // the snake cannot invert its course
       case 37:

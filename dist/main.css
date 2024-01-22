@@ -1,0 +1,231 @@
+/*!*********************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/style.scss ***!
+  \*********************************************************************************************************/
+#controls-area {
+  position: absolute;
+  left: 50px;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.controls-tag {
+  font-family: sans-serif;
+  font-weight: bold;
+  color: #3e5777;
+  margin-top: 30px;
+}
+
+.controls-container {
+  width: 100%;
+  display: flex;
+  margin: 5px 0px;
+}
+
+.button {
+  font-family: sans-serif;
+  color: #3e5777;
+  background-color: #d9e9f5;
+  padding: 10px 30px;
+  margin-right: 10px;
+  border-radius: 3px;
+  text-align: center;
+}
+
+.button:hover {
+  cursor: pointer;
+}
+
+.control-button {
+  display: inline-block;
+  width: 65px;
+}
+
+.blue-button {
+  color: white;
+  background-color: #417be8;
+}
+
+.new-game-button {
+  margin: auto;
+}
+
+#points {
+  display: block;
+  margin: 40px 5px;
+  font-family: sans-serif;
+  color: #3e5777;
+}
+
+#points-value {
+  font-weight: bold;
+  font-size: 26px;
+  color: inherit;
+}
+
+#game-area {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  width: 900px;
+  height: 600px;
+  background-color: rgb(219, 233, 255);
+  z-index: 1;
+}
+
+#game-over-layer {
+  display: none;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  width: 900px;
+  height: 600px;
+  background-color: rgba(219, 233, 255, 0.85);
+  z-index: 2;
+}
+
+#game-over-message {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  font-size: 35px;
+  font-family: sans-serif;
+}
+
+#new-game-container {
+  position: absolute;
+  bottom: 50px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+#moving-tail {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: #3737ae;
+  animation-duration: 0.05s;
+  animation-fill-mode: forwards;
+  animation-timing-function: linear;
+}
+
+#moving-head {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: #3737ae;
+  animation-duration: 0.05s;
+  animation-fill-mode: forwards;
+  animation-timing-function: linear;
+  transform: scale(0);
+}
+
+.block {
+  position: absolute;
+  width: 15px;
+  height: 15px;
+}
+
+.snake-block {
+  background-color: #3737ae;
+}
+
+.food-block {
+  background-color: #f85c00;
+}
+
+/* .transparent has to come after .snake-block */
+.transparent {
+  background-color: transparent;
+}
+
+#moving-head.head-right-movement {
+  animation-name: head-right-movement-animation;
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+@keyframes head-right-movement-animation {
+  to {
+    transform: scaleX(1);
+  }
+}
+#moving-head.head-left-movement {
+  animation-name: head-left-movement-animation;
+  transform: scaleX(0);
+  transform-origin: right;
+}
+
+@keyframes head-left-movement-animation {
+  to {
+    transform: scaleX(1);
+  }
+}
+#moving-head.head-down-movement {
+  animation-name: head-down-movement-animation;
+  transform: scaleY(0);
+  transform-origin: top;
+}
+
+@keyframes head-down-movement-animation {
+  to {
+    transform: scaleY(1);
+  }
+}
+#moving-head.head-up-movement {
+  animation-name: head-up-movement-animation;
+  transform: scaleY(0);
+  transform-origin: bottom;
+}
+
+@keyframes head-up-movement-animation {
+  to {
+    transform: scaleY(1);
+  }
+}
+#moving-tail.tail-right-movement {
+  animation-name: tail-right-movement-animation;
+  transform: scaleX(1);
+  transform-origin: right;
+}
+
+@keyframes tail-right-movement-animation {
+  to {
+    transform: scaleX(0);
+  }
+}
+#moving-tail.tail-left-movement {
+  animation-name: tail-left-movement-animation;
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+@keyframes tail-left-movement-animation {
+  to {
+    transform: scaleX(0);
+  }
+}
+#moving-tail.tail-down-movement {
+  animation-name: tail-down-movement-animation;
+  transform: scaleY(1);
+  transform-origin: bottom;
+}
+
+@keyframes tail-down-movement-animation {
+  to {
+    transform: scaleY(0);
+  }
+}
+#moving-tail.tail-up-movement {
+  animation-name: tail-up-movement-animation;
+  transform: scaleY(1);
+  transform-origin: top;
+}
+
+@keyframes tail-up-movement-animation {
+  to {
+    transform: scaleY(0);
+  }
+}
